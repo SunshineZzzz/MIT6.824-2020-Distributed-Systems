@@ -69,7 +69,7 @@ func (m *Master) initReduceTask() {
 
 		indexSlice = append(indexSlice, index)
 	}
-	m.FinishPoolMap = make(map[uint64]Task, m.mapFileNum)
+	m.FinishPoolMap = make(map[uint64]Task, m.MapFileNum)
 	for index, _ := range m.TaskPoolMap {
 		m.TaskPoolMap[index].MapIndex = append(m.TaskPoolMap[index].MapIndex, indexSlice...)
 	}
@@ -77,7 +77,7 @@ func (m *Master) initReduceTask() {
 
 // 检测超时任务，并且将超时的任务放回池子中
 func (m *Master) checkTimeoutTask() {
-	tmpTask := []Task
+	var tmpTask []Task
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	for index, task := range m.RunningPoolMap {
@@ -96,7 +96,7 @@ func (m *Master) checkTimeoutTask() {
 }
 
 // 是否所有阶段任务都完成
-func (m *Master) isAllPhaseDone() {
+func (m *Master) isAllPhaseDone() bool {
 	m.checkTimeoutTask()
 	bFinish := true
 	m.mutex.Lock()
@@ -143,6 +143,7 @@ func (m *Master) HelloRPC(args *HelloArgs, reply *HelloReply) error {
 	reply.Id = m.genWorkerId
 
 	log.Printf("%d worker hello: %v\n", args.Id, reply)
+	return nil
 }
 
 // require task rpc
@@ -244,13 +245,13 @@ func MakeMaster(files []string, nReduce int) *Master {
 	m.MapFileNum = mapFileNum
 	for i := 0; i < mapFileNum; i++ {
 		m.TaskPoolMap[i] = Task {
-			Phase = TaskPhaseMap
-			Index = i
-			OriginIndex = i
-			Status = TaskStatusPool
-			FileName = files[i]
-			ReduceNum = nReduce
-			MapIndex = make([]uint64, mapFileNum)
+			Phase: TaskPhaseMap,
+			Index: i,
+			OriginIndex: i,
+			Status: TaskStatusPool,
+			FileName: files[i],
+			ReduceNum: nReduce,
+			MapIndex: make([]uint64, mapFileNum),
 		}
 	}
 	m.genWorkerId = 0

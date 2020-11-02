@@ -13,7 +13,7 @@ import "strconv"
 import "sort"
 
 // for sorting by key.
-type ByKey []mr.KeyValue
+type ByKey []KeyValue
 // for sorting by key.
 func (a ByKey) Len() int { 
 	return len(a) 
@@ -97,7 +97,7 @@ func CallRequireTask() {
 	args := ReqTaskArgs{}
 	args.Id = gId
 	reply := ReqTaskReply{}
-	if ok := call("Master.RequireTaskRPC", &args, &reply) {
+	if ok := call("Master.RequireTaskRPC", &args, &reply); !ok {
 		log.Fatalf("%d require task failed", gId)
 	}
 	log.Printf("%d get task %v\n", gId, reply)
@@ -110,7 +110,7 @@ func CallReportTask(index uint64, success bool) {
 	args.Index = index
 	args.IsDone = success
 	reply := RepTaskReply{}
-	if ok := call("Master.ReportTaskRPC", &args, &reply) {
+	if ok := call("Master.ReportTaskRPC", &args, &reply); !ok {
 		log.Fatalf("%d report task failed", gId)
 	}
 	log.Printf("%d report task %v\n", gId, reply)
@@ -160,9 +160,9 @@ func todoMapTask(task Task, mapf func(string, string) []KeyValue) (bool, error) 
 	}
 	kva := mapf(task.FileName, string(content))
 	intermediateFiles := []*os.File
-	defer func closeIntermediateFiles() {
+	defer func() {
 		for _, file := range intermediateFiles {
-			file.close()
+			file.Close()
 		}
 	}()
 	for i := 0; i < task.ReduceNum; i++ {
@@ -187,6 +187,7 @@ func todoMapTask(task Task, mapf func(string, string) []KeyValue) (bool, error) 
 // reduce任务
 func todoReduceTask(task Task, reducef func(string, []string)) (bool, error) {
 	log.Printf("%d begin reduce task %v \n", gId, task)
+
 	intermediate := []KeyValue
 	for _, index := range task.MapIndex {
 		intermediateFileName := "mr" + "-" + strconv.Itoa(index) + "-" + strconv.Itoa(task.OriginIndex)
