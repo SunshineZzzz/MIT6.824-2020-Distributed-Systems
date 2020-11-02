@@ -67,7 +67,7 @@ func Worker(mapf func(string, string) []KeyValue, reducef func(string, []string)
 			log.Printf("%d todoTask err: %s\n", gId, err)
 		}
 		// 报告任务
-		CallReportTask(ok, reply.Task.Index)
+		CallReportTask(reply.Task.Indexm, ok)
 	}
 	return
 }
@@ -137,7 +137,7 @@ func call(rpcname string, args interface{}, reply interface{}) bool {
 }
 
 // 执行任务
-func todoTask(task Task, mapf func(string, string) []KeyValue, reducef func(string, []string)) (bool, error) {
+func todoTask(task Task, mapf func(string, string) []KeyValue, reducef func(string, []string) string) (bool, error) {
 	if task.Phase == TaskPhaseMap {
 		return todoMapTask(task, mapf)
 	} else if task.Phase == TaskPhaseReduce {
@@ -186,7 +186,7 @@ func todoMapTask(task Task, mapf func(string, string) []KeyValue) (bool, error) 
 }
 
 // reduce任务
-func todoReduceTask(task Task, reducef func(string, []string)) (bool, error) {
+func todoReduceTask(task Task, reducef func(string, []string) string) (bool, error) {
 	log.Printf("%d begin reduce task %v \n", gId, task)
 
 	intermediate := []KeyValue

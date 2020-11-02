@@ -192,7 +192,7 @@ func (m *Master) ReportTaskRPC(args *RepTaskArgs, reply *RepTaskReply) error {
 			delete(m.RunningPoolMap, index)
 			if (m.Phase == TaskPhaseReduce && task.Phase == TaskPhaseReduce) {
 				oldName := "reduce-tmp-mr-out-" + strconv.FormatUint(task.Index, 10)
-				newFileName = "mr-out-" + strconv.FormatUint(task.OriginIndex, 10)
+				newFileName = "mr-out-" + strconv.Itoa(task.OriginIndex)
 				os.Rename(oldName, newFileName)
 			}
 		}
