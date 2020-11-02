@@ -191,8 +191,8 @@ func (m *Master) ReportTaskRPC(args *RepTaskArgs, reply *RepTaskReply) error {
 			m.FinishPoolMap[index] = task
 			delete(m.RunningPoolMap, index)
 			if (m.Phase == TaskPhaseReduce && task.Phase == TaskPhaseReduce) {
-				oldName := "reduce-tmp-mr-out-" + strconv.ParseUint(task.Index, 10, 64)
-				newFileName = "mr-out-" + strconv.ParseUint(task.OriginIndex, 10, 64)
+				oldName := "reduce-tmp-mr-out-" + strconv.FormatUint(task.Index, 10)
+				newFileName = "mr-out-" + strconv.FormatUint(task.OriginIndex, 10)
 				os.Rename(oldName, newFileName)
 			}
 		}

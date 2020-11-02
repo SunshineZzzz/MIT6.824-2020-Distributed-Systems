@@ -83,7 +83,7 @@ func CallExample() {
 }
 
 // helllo
-func CallHello() {
+func CallHello() HelloReply {
 	args := HelloArgs{}
 	reply := HelloReply{}
 	if ok := call("Master.HelloRPC", &args, &reply); !ok {
@@ -93,7 +93,7 @@ func CallHello() {
 }
 
 // require task
-func CallRequireTask() {
+func CallRequireTask() ReqTaskReply {
 	args := ReqTaskArgs{}
 	args.Id = gId
 	reply := ReqTaskReply{}
@@ -105,7 +105,7 @@ func CallRequireTask() {
 }
 
 // report task
-func CallReportTask(index uint64, success bool) {
+func CallReportTask(index uint64, success bool) RepTaskReply {
 	args := RepTaskArgs{}
 	args.Id = gId
 	args.Index = index
