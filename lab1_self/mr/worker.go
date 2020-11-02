@@ -67,7 +67,7 @@ func Worker(mapf func(string, string) []KeyValue, reducef func(string, []string)
 			log.Printf("%d todoTask err: %s\n", gId, err)
 		}
 		// 报告任务
-		CallReportTask(reply.Task.Indexm, ok)
+		CallReportTask(reply.Task.Index, ok)
 	}
 	return
 }
@@ -160,14 +160,14 @@ func todoMapTask(task Task, mapf func(string, string) []KeyValue) (bool, error) 
 		return false, err
 	}
 	kva := mapf(task.FileName, string(content))
-	intermediateFiles := []*os.File
+	intermediateFiles := make([]*os.File, task.ReduceNum)
 	defer func() {
 		for _, file := range intermediateFiles {
 			file.Close()
 		}
 	}()
 	for i := 0; i < task.ReduceNum; i++ {
-		intermediateFileName := "mr" + "-" + strconv.Itoa(task.Index) + "-" + strconv.Itoa(i)
+		intermediateFileName := "mr" + "-" + strconv.FormatUint(task.Index, 10) + "-" + strconv.Itoa(i)
 		file, err := os.Open(intermediateFileName)
 		if err != nil {
 			return false, err
@@ -189,14 +189,16 @@ func todoMapTask(task Task, mapf func(string, string) []KeyValue) (bool, error) 
 func todoReduceTask(task Task, reducef func(string, []string) string) (bool, error) {
 	log.Printf("%d begin reduce task %v \n", gId, task)
 
-	intermediate := []KeyValue
+	// 不要创建空切片
+	// intermediate := []KeyValue{}
+	var intermediate []KeyValue
 	for _, index := range task.MapIndex {
-		intermediateFileName := "mr" + "-" + strconv.Itoa(index) + "-" + strconv.Itoa(task.OriginIndex)
+		intermediateFileName := "mr" + "-" + strconv.FormatUint(index, 10) + "-" + strconv.Itoa(task.OriginIndex)
 		file, err := os.Open(intermediateFileName)
 		if err != nil {
 			return false, err
 		}
-		defer file.close()
+		defer file.Close()
 		dec := json.NewDecoder(file)
 		for {
 			var kv KeyValue
@@ -208,7 +210,7 @@ func todoReduceTask(task Task, reducef func(string, []string) string) (bool, err
 		}	
 	}
 	sort.Sort(ByKey(intermediate))
-	oname := "reduce-tmp-mr-out-" + strconv.Itoa(task.Index)
+	oname := "reduce-tmp-mr-out-" + strconv.FormatUint(task.Index, 10)
 	ofile, _ := os.Create(oname)
 	i := 0
 	for i < len(intermediate) {
