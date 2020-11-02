@@ -49,7 +49,7 @@ type Task struct {
 	// 最初的下标 0,1,2,...n
 	// master初始化时赋值，主要用于worker reduce阶段
 	// mr-mapIndex-OriginIndex
-	OriginIndex uint64
+	OriginIndex int
 	// 任务状态
 	Status TaskStatus
 	// 开始执行任务时间

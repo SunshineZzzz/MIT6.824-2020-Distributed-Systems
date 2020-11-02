@@ -71,7 +71,7 @@ func (m *Master) initReduceTask() {
 	}
 	m.FinishPoolMap = make(map[uint64]Task, m.MapFileNum)
 	for index, task := range m.TaskPoolMap {
-		task.MapIndex := append(task.MapIndex, indexSlice...)
+		task.MapIndex = append(task.MapIndex, indexSlice...)
 		m.TaskPoolMap[index] = task
 	}
 }
@@ -191,8 +191,8 @@ func (m *Master) ReportTaskRPC(args *RepTaskArgs, reply *RepTaskReply) error {
 			m.FinishPoolMap[index] = task
 			delete(m.RunningPoolMap, index)
 			if (m.Phase == TaskPhaseReduce && task.Phase == TaskPhaseReduce) {
-				oldName := "reduce-tmp-mr-out-" + strconv.Itoa(task.Index)
-				newFileName = "mr-out-" + strconv.Itoa(task.OriginIndex)
+				oldName := "reduce-tmp-mr-out-" + strconv.ParseUint(task.Index, 10, 64)
+				newFileName = "mr-out-" + strconv.ParseUint(task.OriginIndex, 10, 64)
 				os.Rename(oldName, newFileName)
 			}
 		}
@@ -222,7 +222,7 @@ func (m *Master) Done() bool {
 	ret := false
 
 	// 你的代码
-	ret = isAllPhaseDone()
+	ret = m.isAllPhaseDone()
 	return ret
 }
 
@@ -246,9 +246,9 @@ func MakeMaster(files []string, nReduce int) *Master {
 	m.ReduceNum = nReduce
 	m.MapFileNum = mapFileNum
 	for i := 0; i < mapFileNum; i++ {
-		m.TaskPoolMap[i] = Task {
+		m.TaskPoolMap[uint64(i)] = Task {
 			Phase: TaskPhaseMap,
-			Index: i,
+			Index: uint64(i),
 			OriginIndex: i,
 			Status: TaskStatusPool,
 			FileName: files[i],
