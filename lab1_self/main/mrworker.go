@@ -27,7 +27,7 @@ func loadPlugin(filename string) (func(string, string) []mr.KeyValue, func(strin
 	}
 	xmapf, err := p.Lookup("Map")
 	if err != nil {
-		log.Fatalf("cannot find Map in %v", filname)
+		log.Fatalf("cannot find Map in %v", filename)
 	}
 	mapf := xmapf.(func(string, string) []mr.KeyValue)
 	xreducef, err := p.Lookup("Reduce")
