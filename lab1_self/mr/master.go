@@ -70,8 +70,9 @@ func (m *Master) initReduceTask() {
 		indexSlice = append(indexSlice, index)
 	}
 	m.FinishPoolMap = make(map[uint64]Task, m.MapFileNum)
-	for index, _ := range m.TaskPoolMap {
-		m.TaskPoolMap[index].MapIndex = append(m.TaskPoolMap[index].MapIndex, indexSlice...)
+	for index, task := range m.TaskPoolMap {
+		task.MapIndex := append(task.MapIndex, indexSlice...)
+		m.TaskPoolMap[index] = task
 	}
 }
 
@@ -142,7 +143,7 @@ func (m *Master) HelloRPC(args *HelloArgs, reply *HelloReply) error {
 	m.genWorkerId++
 	reply.Id = m.genWorkerId
 
-	log.Printf("%d worker hello: %v\n", args.Id, reply)
+	log.Printf("worker hello: %v\n", reply)
 	return nil
 }
 
@@ -156,8 +157,9 @@ func (m *Master) RequireTaskRPC(args *ReqTaskArgs, reply *ReqTaskReply) error {
 	defer m.mutex.Unlock()
 	if len(m.TaskPoolMap) > 0 {
 		for index, task := range m.TaskPoolMap {
-			m.TaskPoolMap[index].Status = TaskStatusRunning
-			m.TaskPoolMap[index].StartRunTime = time.Now()
+			task.Status = TaskStatusRunning
+			task.StartRunTime = time.Now()
+			m.TaskPoolMap[index] = task
 			reply.Task = task
 			break
 		}
@@ -172,7 +174,7 @@ func (m *Master) RequireTaskRPC(args *ReqTaskArgs, reply *ReqTaskReply) error {
 // report task rpc
 func (m *Master) ReportTaskRPC(args *RepTaskArgs, reply *RepTaskReply) error {
 	var isAck bool = false
-	var index uint64 = reply.Index
+	var index uint64 = args.Index
 	var newFileName string = ""
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
@@ -181,14 +183,14 @@ func (m *Master) ReportTaskRPC(args *RepTaskArgs, reply *RepTaskReply) error {
 		// 没有被移除，说明按时完成任务了
 		if ok {
 			isAck = true
-			task, ok = m.FinishPoolMap[index]
-			if ok {
+			task, has := m.FinishPoolMap[index]
+			if has {
 				log.Fatalf("%d worker, m.FinishPoolMap[%d] already exists task: %v\n", args.Id, index, task)
 			}
-			m.FinishPoolMap[index] = m.RunningPoolMap[index]
-			m.FinishPoolMap[index].Status = TaskStatusFinish
+			task.Status = TaskStatusFinish
+			m.FinishPoolMap[index] = task
 			delete(m.RunningPoolMap, index)
-			if m.Phase == TaskPhaseReduce && task.Phase == TaskPhaseReduce {
+			if (m.Phase == TaskPhaseReduce && task.Phase == TaskPhaseReduce) {
 				oldName := "reduce-tmp-mr-out-" + strconv.Itoa(task.Index)
 				newFileName = "mr-out-" + strconv.Itoa(task.OriginIndex)
 				os.Rename(oldName, newFileName)

@@ -107,6 +107,7 @@ func CallRequireTask() {
 // report task
 func CallReportTask(index uint64, success bool) {
 	args := RepTaskArgs{}
+	args.Id = gId
 	args.Index = index
 	args.IsDone = success
 	reply := RepTaskReply{}

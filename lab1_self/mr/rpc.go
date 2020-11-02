@@ -83,6 +83,7 @@ type ReqTaskReply struct {
 
 // report
 type RepTaskArgs struct {
+	Id uint64
 	// 任务序号
 	Index uint64
 	// 是否完成
