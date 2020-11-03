@@ -89,6 +89,7 @@ func CallHello() HelloReply {
 	if ok := call("Master.HelloRPC", &args, &reply); !ok {
 		log.Fatal("Call Master.HelloRPC failed")
 	}
+	log.Printf("hello %v\n", reply)
 	return reply
 }
 

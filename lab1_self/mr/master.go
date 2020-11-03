@@ -159,7 +159,8 @@ func (m *Master) RequireTaskRPC(args *ReqTaskArgs, reply *ReqTaskReply) error {
 		for index, task := range m.TaskPoolMap {
 			task.Status = TaskStatusRunning
 			task.StartRunTime = time.Now()
-			m.TaskPoolMap[index] = task
+			m.RunningPoolMap[index] = task
+			delete(m.TaskPoolMap, index)
 			reply.Task = task
 			break
 		}
