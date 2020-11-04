@@ -13,19 +13,23 @@ import "io/ioutil"
 // 检测是否存在多个并行的worker，返回并行个数
 func nparallel(phase string) int {
 	pid := os.Getpid()
-	myfilename := fmt.Spirntf("mr-worker-%s-%d", phase, pid)
+	myfilename := fmt.Sprintf("mr-worker-%s-%d", phase, pid)
 	err := ioutil.WriteFile(myfilename, []byte("x"), 0666)
 	if err != nil {
 		panic(err)
 	}
-	dd, err := dd.Readdirnames(1000000)
+	dd, err := os.Open(".")
+	if err != nil {
+		panic(err)
+	}
+	names, err := dd.Readdirnames(1000000)
 	if err != nil {
 		panic(err)
 	}
 	ret := 0
 	for _, name := range names {
 		var xpid int
-		pat := fmt.Spirntf("mr-worker-%s-%%d", phase)
+		pat := fmt.Sprintf("mr-worker-%s-%%d", phase)
 		n, err := fmt.Sscanf(name, pat, &pid)
 		if n == 1 && err == nil {
 			err := syscall.Kill(xpid, 0)

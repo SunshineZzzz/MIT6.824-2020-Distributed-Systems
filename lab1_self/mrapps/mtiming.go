@@ -66,11 +66,11 @@ func Map(filename string, contents string) []mr.KeyValue {
 	kva := []mr.KeyValue{}
 	kva = append(kva, mr.KeyValue{
 		fmt.Sprintf("times-%v", pid),
-		fmt.Sprintf("%.1f", ts)
+		fmt.Sprintf("%.1f", ts),
 	})
 	kva = append(kva, mr.KeyValue{
 		fmt.Sprintf("parallel-%v", pid),
-		fmt.Sprintf("%d", n)
+		fmt.Sprintf("%d", n),
 	})
 	return kva
 }
