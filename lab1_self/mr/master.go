@@ -86,7 +86,7 @@ func (m *Master) checkTimeoutTask() {
 		curTimeDuration := now.Sub(task.StartRunTime)
 		if curTimeDuration > MaxTaskRunTimeDuration {
 			log.Printf("now: %v, startruntime: %v, diff: %v\n", 
-				now.Uinx(), task.StartRunTime.Unix(), (task.StartRunTime.Unix() - now.Uinx()))
+				now.Uinx(), task.StartRunTime.Unix(), (task.StartRunTime.Unix() - now.Unix()))
 			tmpTask = append(tmpTask, task)
 			delete(m.RunningPoolMap, index)
 		}
