@@ -73,6 +73,7 @@ func (m *Master) initReduceTask() {
 		task.MapIndex = append(task.MapIndex, indexSlice...)
 		m.TaskPoolMap[index] = task
 	}
+	m.Phase = TaskPhaseReduce
 }
 
 // 检测超时任务，并且将超时的任务放回池子中
