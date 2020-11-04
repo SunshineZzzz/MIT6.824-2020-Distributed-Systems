@@ -45,8 +45,8 @@ func ihash(key string) int {
 // main/mrworker.go调用该函数
 func Worker(mapf func(string, string) []KeyValue, reducef func(string, []string) string) {
 	// 你的worker代码
-	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
-	
+	log.SetFlags(log.Lshortfile | log.LUTC)
+
 	// 注释掉下面的行，可以发送一个RPC请求到Master
 	// CallExample()
 	reply := CallHello()

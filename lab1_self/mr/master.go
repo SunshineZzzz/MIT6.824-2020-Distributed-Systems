@@ -44,8 +44,7 @@ type Master struct {
 
 // 初始化reduce任务
 func (m *Master) initReduceTask() {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	// 这里不加锁了，调用这个函数前应该加锁了，TODO加个断言判断是否已经加锁
 	if len(m.TaskPoolMap) != 0 {
 		log.Fatalf("len m.TaskPoolMap %d not equal 0 \n", len(m.TaskPoolMap))
 	}
@@ -238,7 +237,7 @@ func (m *Master) Done() bool {
 // main/mrmaster.go 调用该函数
 // nReduce代表reduce task数量
 func MakeMaster(files []string, nReduce int) *Master {
-	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
+	log.SetFlags(log.Lshortfile | log.LUTC)
 
 	m := Master{}
 
