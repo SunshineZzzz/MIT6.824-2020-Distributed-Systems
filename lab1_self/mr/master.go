@@ -201,7 +201,10 @@ func (m *Master) ReportTaskRPC(args *RepTaskArgs, reply *RepTaskReply) error {
 			if (m.Phase == TaskPhaseReduce && task.Phase == TaskPhaseReduce) {
 				oldName := "reduce-tmp-mr-out-" + strconv.FormatUint(task.Index, 10)
 				newFileName = "mr-out-" + strconv.Itoa(task.OriginIndex)
-				os.Rename(oldName, newFileName)
+				err := os.Rename(oldName, newFileName)
+				if err {
+					log.Fatalf("%d worker, os.Rename oldName: %v, newFileName: %v err: %v\n", args.Id, oldName, newFileName, err)
+				}
 			}
 		}
 	}
