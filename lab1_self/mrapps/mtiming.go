@@ -58,7 +58,7 @@ func nparallel(phase string) int {
 
 func Map(filename string, contents string) []mr.KeyValue {
 	t0 := time.Now()
-	ts := float64(t0.Uinx()) + (float64(t0.Nanosecond()) / 1000000000.0)
+	ts := float64(t0.Unix()) + (float64(t0.Nanosecond()) / 1000000000.0)
 	pid := os.Getpid()
 
 	n := nparallel("map")
