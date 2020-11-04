@@ -235,7 +235,7 @@ func (m *Master) Done() bool {
 // main/mrmaster.go 调用该函数
 // nReduce代表reduce task数量
 func MakeMaster(files []string, nReduce int) *Master {
-	log.SetFlags(log.Lshortfile | log.Ldate | Ldate)
+	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
 
 	m := Master{}
 
