@@ -169,7 +169,7 @@ func todoMapTask(task Task, mapf func(string, string) []KeyValue) (bool, error) 
 	}()
 	for i := 0; i < task.ReduceNum; i++ {
 		intermediateFileName := "mr" + "-" + strconv.FormatUint(task.Index, 10) + "-" + strconv.Itoa(i)
-		file, err := os.Open(intermediateFileName)
+		file, err := os.OpenFile(intermediateFileName, os.O_RDWR|os.O_CREATE, 0755)
 		if err != nil {
 			return false, err
 		}
