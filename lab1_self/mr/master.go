@@ -86,7 +86,7 @@ func (m *Master) checkTimeoutTask() {
 		curTimeDuration := now.Sub(task.StartRunTime)
 		if curTimeDuration > MaxTaskRunTimeDuration {
 			log.Printf("now: %v, startruntime: %v, diff: %v\n", 
-				now.Unix(), task.StartRunTime.Unix(), (task.StartRunTime.Unix() - now.Unix()))
+				now.Unix(), task.StartRunTime.Unix(), (now.Unix() - task.StartRunTime.Unix()))
 			tmpTask = append(tmpTask, task)
 			delete(m.RunningPoolMap, index)
 		}
@@ -235,6 +235,8 @@ func (m *Master) Done() bool {
 // main/mrmaster.go 调用该函数
 // nReduce代表reduce task数量
 func MakeMaster(files []string, nReduce int) *Master {
+	log.SetFlags(log.Lshortfile | log.Ldate | Ldate)
+
 	m := Master{}
 
 	m.mutex.Lock()
