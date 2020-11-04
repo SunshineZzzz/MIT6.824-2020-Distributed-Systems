@@ -54,8 +54,8 @@ func (m *Master) initReduceTask() {
 	if len(m.FinishPoolMap) != m.MapFileNum {
 		log.Fatalf("len m.FinishPoolMap %d not equal m.MapFileNum %d \n", len(m.FinishPoolMap), m.MapFileNum)
 	}
-	indexSlice := make([]uint64, m.MapFileNum)
-	m.MapIndex = make([]uint64, m.MapFileNum)
+	// 用用空切片
+	indexSlice := []uint64{}
 	for index, task := range m.FinishPoolMap {
 		task.Phase = TaskPhaseReduce
 		task.Index = index
