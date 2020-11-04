@@ -248,7 +248,7 @@ func MakeMaster(files []string, nReduce int) *Master {
 	m.TaskPoolMap = make(map[uint64]Task, mapFileNum)
 	m.RunningPoolMap = make(map[uint64]Task, mapFileNum)
 	m.FinishPoolMap = make(map[uint64]Task, mapFileNum)
-	m.MapIndex = make([]uint64, mapFileNum)
+	m.MapIndex = make([]uint64, 0, mapFileNum)
 	m.Files = files
 	m.Phase = TaskPhaseMap
 	m.IsDone = false
@@ -262,7 +262,7 @@ func MakeMaster(files []string, nReduce int) *Master {
 			Status: TaskStatusPool,
 			FileName: files[i],
 			ReduceNum: nReduce,
-			MapIndex: make([]uint64, mapFileNum),
+			MapIndex: make([]uint64, 0, mapFileNum),
 		}
 		m.genTaskId = uint64(i)
 	}
