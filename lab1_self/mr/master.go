@@ -86,7 +86,7 @@ func (m *Master) checkTimeoutTask() {
 		curTimeDuration := now.Sub(task.StartRunTime)
 		if curTimeDuration > MaxTaskRunTimeDuration {
 			log.Printf("now: %v, startruntime: %v, diff: %v\n", 
-				now.Uinx(), task.StartRunTime.Unix(), (task.StartRunTime.Unix() - now.Unix()))
+				now.Unix(), task.StartRunTime.Unix(), (task.StartRunTime.Unix() - now.Unix()))
 			tmpTask = append(tmpTask, task)
 			delete(m.RunningPoolMap, index)
 		}
@@ -259,10 +259,10 @@ func MakeMaster(files []string, nReduce int) *Master {
 			ReduceNum: nReduce,
 			MapIndex: make([]uint64, mapFileNum),
 		}
+		m.genTaskId = i
 	}
 	m.genWorkerId = 0
-	m.genTaskId = 0
-
+	
 	// 开启线程监听
 	m.server()
 	return &m
