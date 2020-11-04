@@ -82,8 +82,11 @@ func (m *Master) checkTimeoutTask() {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	for index, task := range m.RunningPoolMap {
-		curTimeDuration := time.Now().Sub(task.StartRunTime)
+		now := time.Now()
+		curTimeDuration := now.Sub(task.StartRunTime)
 		if curTimeDuration > MaxTaskRunTimeDuration {
+			log.Printf("now: %v, startruntime: %v, diff: %v\n", 
+				now.Uinx(), task.StartRunTime.Unix(), (task.StartRunTime.Unix() - now.Uinx()))
 			tmpTask = append(tmpTask, task)
 			delete(m.RunningPoolMap, index)
 		}

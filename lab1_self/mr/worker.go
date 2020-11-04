@@ -173,7 +173,7 @@ func todoMapTask(task Task, mapf func(string, string) []KeyValue) (bool, error) 
 		if err != nil {
 			return false, err
 		}
-		intermediateFiles = append(intermediateFiles, file)
+		intermediateFiles[i] = file
 	}
 	for _, kv := range kva {
 		reduceIndex := ihash(kv.Key) % task.ReduceNum
