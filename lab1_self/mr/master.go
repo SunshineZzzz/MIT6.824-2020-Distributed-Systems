@@ -191,6 +191,7 @@ func (m *Master) ReportTaskRPC(args *RepTaskArgs, reply *RepTaskReply) error {
 			if has {
 				log.Fatalf("%d worker, m.FinishPoolMap[%d] already exists task: %v\n", args.Id, index, task)
 			}
+			task = m.RunningPoolMap[index]
 			task.Status = TaskStatusFinish
 			m.FinishPoolMap[index] = task
 			delete(m.RunningPoolMap, index)
@@ -259,7 +260,7 @@ func MakeMaster(files []string, nReduce int) *Master {
 			ReduceNum: nReduce,
 			MapIndex: make([]uint64, mapFileNum),
 		}
-		m.genTaskId = i
+		m.genTaskId = uint64(i)
 	}
 	m.genWorkerId = 0
 	
