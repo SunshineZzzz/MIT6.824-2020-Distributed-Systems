@@ -202,7 +202,7 @@ func (m *Master) ReportTaskRPC(args *RepTaskArgs, reply *RepTaskReply) error {
 				oldName := "reduce-tmp-mr-out-" + strconv.FormatUint(task.Index, 10)
 				newFileName = "mr-out-" + strconv.Itoa(task.OriginIndex)
 				err := os.Rename(oldName, newFileName)
-				if err {
+				if err != nil {
 					log.Fatalf("%d worker, os.Rename oldName: %v, newFileName: %v err: %v\n", args.Id, oldName, newFileName, err)
 				}
 			}
