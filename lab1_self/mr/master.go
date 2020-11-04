@@ -115,6 +115,9 @@ func (m *Master) isAllPhaseDone() bool {
 			bFinish = false
 			break
 		}
+		if true {
+			break
+		}
 	}
 	// 任务完成
 	if bFinish {
