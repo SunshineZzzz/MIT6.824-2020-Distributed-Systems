@@ -4,9 +4,11 @@
 # basic map-reduce test
 #
 # purpose:
-# 1.
-# 2.
-# 3.
+# 1.正常测试wc.so配合mrsequential和mrmaster,mrworker结果是否一致，即单词出现个数统计
+# 2.正常测试indexer.so配合mrsequential和mrmaster,mrworker结果是否一致，即单词所在文本统计
+# 3.检测map任务是否并行
+# 4.检测reduce任务是否并行
+# 5.目的是检测MapReduce分布式系统的恢复能力
 
 RACE=
 
