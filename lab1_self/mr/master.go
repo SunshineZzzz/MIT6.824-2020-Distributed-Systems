@@ -54,26 +54,28 @@ func (m *Master) initReduceTask() {
 	if len(m.FinishPoolMap) != m.MapFileNum {
 		log.Fatalf("len m.FinishPoolMap %d not equal m.MapFileNum %d \n", len(m.FinishPoolMap), m.MapFileNum)
 	}
+	m.Phase = TaskPhaseReduce
 	// 用用空切片
 	indexSlice := []uint64{}
-	for index, task := range m.FinishPoolMap {
-		task.Phase = TaskPhaseReduce
-		task.Index = index
-		task.Status = TaskStatusPool
-		task.StartRunTime = time.Unix(0, 0)
-		task.FileName = ""
-
-		m.MapIndex = append(m.MapIndex, index)
-		m.TaskPoolMap[index] = task
-
+	for index, _ := range m.FinishPoolMap {
 		indexSlice = append(indexSlice, index)
 	}
-	m.FinishPoolMap = make(map[uint64]Task, m.MapFileNum)
-	for index, task := range m.TaskPoolMap {
+	m.FinishPoolMap = make(map[uint64]Task, m.ReduceNum)
+	// 重置任务池
+	for i := 0; i < m.ReduceNum; i++ {
+		task := Task {
+			Phase: TaskPhaseReduce,
+			Index: uint64(i),
+			OriginIndex: i,
+			Status: TaskStatusPool,
+			FileName: "",
+			ReduceNum: m.ReduceNum,
+			MapIndex: make([]uint64, 0, m.mapFileNum),
+		}
 		task.MapIndex = append(task.MapIndex, indexSlice...)
-		m.TaskPoolMap[index] = task
+		m.TaskPoolMap[uint64(i)] = task
+		m.genTaskId = uint64(i)
 	}
-	m.Phase = TaskPhaseReduce
 }
 
 // 检测超时任务，并且将超时的任务放回池子中
@@ -241,7 +243,7 @@ func (m *Master) Done() bool {
 // main/mrmaster.go 调用该函数
 // nReduce代表reduce task数量
 func MakeMaster(files []string, nReduce int) *Master {
-	log.SetFlags(log.Lshortfile | log.LUTC)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile)
 
 	m := Master{}
 
@@ -249,9 +251,9 @@ func MakeMaster(files []string, nReduce int) *Master {
 	defer m.mutex.Unlock()
 	// 你的代码
 	mapFileNum := len(files)
-	m.TaskPoolMap = make(map[uint64]Task, mapFileNum)
-	m.RunningPoolMap = make(map[uint64]Task, mapFileNum)
-	m.FinishPoolMap = make(map[uint64]Task, mapFileNum)
+	m.TaskPoolMap = make(map[uint64]Task, nReduce)
+	m.RunningPoolMap = make(map[uint64]Task, nReduce)
+	m.FinishPoolMap = make(map[uint64]Task, nReduce)
 	m.MapIndex = make([]uint64, 0, mapFileNum)
 	m.Files = files
 	m.Phase = TaskPhaseMap
