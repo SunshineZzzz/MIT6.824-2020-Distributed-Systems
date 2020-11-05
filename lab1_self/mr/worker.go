@@ -116,7 +116,7 @@ func CallReportTask(index uint64, success bool) RepTaskReply {
 	if ok := call("Master.ReportTaskRPC", &args, &reply); !ok {
 		log.Fatalf("%d report task failed", gId)
 	}
-	log.Printf("%d report task %v\n", gId, reply)
+	log.Printf("%d report %v task %v\n", gId, index, reply)
 	return reply	
 }
 

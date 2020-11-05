@@ -44,6 +44,8 @@ type Master struct {
 
 // 初始化reduce任务
 func (m *Master) initReduceTask() {
+	log.Printf("Begin initReduceTask...")
+
 	// 这里不加锁了，调用这个函数前应该加锁了，TODO加个断言判断是否已经加锁
 	if len(m.TaskPoolMap) != 0 {
 		log.Fatalf("len m.TaskPoolMap %d not equal 0 \n", len(m.TaskPoolMap))
