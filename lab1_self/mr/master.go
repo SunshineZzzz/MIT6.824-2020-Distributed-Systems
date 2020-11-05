@@ -70,7 +70,7 @@ func (m *Master) initReduceTask() {
 			Status: TaskStatusPool,
 			FileName: "",
 			ReduceNum: m.ReduceNum,
-			MapIndex: make([]uint64, 0, m.mapFileNum),
+			MapIndex: make([]uint64, 0, m.MapFileNum),
 		}
 		task.MapIndex = append(task.MapIndex, indexSlice...)
 		m.TaskPoolMap[uint64(i)] = task
