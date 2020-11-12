@@ -3,3 +3,5 @@
 - [x] [MapReduce](./paper/MapReduce.md)
 
 - [x] [lab1](./lab1_self/lab1.md)
+
+- [x] [GFS](./paper/GFS.md)
