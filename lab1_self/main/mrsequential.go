@@ -51,7 +51,7 @@ func main() {
 	i := 0
 	for i < len(intermediate) {
 		j := i + 1
-		for j <len(intermediate) && intermediate[j].Key == intermediate[i].Key {
+		for j < len(intermediate) && intermediate[j].Key == intermediate[i].Key {
 			j++
 		}
 		// 空切片

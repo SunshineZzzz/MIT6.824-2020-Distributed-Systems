@@ -168,6 +168,10 @@ func todoMapTask(task Task, mapf func(string, string) []KeyValue) (bool, error) 
 			file.Close()
 		}
 	}()
+	// mr-0-0，mr-0-1，mr-0-2，...，mr-0-ReduceNum
+	// mr-1-0，mr-0-1，mr-1-2，...，mr-1-ReduceNum
+	// ...
+	// mr-mapTaskNums-0，mr-mapTaskNums-1，mr-mapTaskNums-2，...，mr-mapTaskNums-ReduceNum
 	for i := 0; i < task.ReduceNum; i++ {
 		intermediateFileName := "mr" + "-" + strconv.FormatUint(task.Index, 10) + "-" + strconv.Itoa(i)
 		file, err := os.OpenFile(intermediateFileName, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0755)
@@ -194,6 +198,13 @@ func todoReduceTask(task Task, reducef func(string, []string) string) (bool, err
 	// 不要创建空切片
 	// intermediate := []KeyValue{}
 	var intermediate []KeyValue
+	// 遍历MapIndex切片中所有完成map任务的下标
+	// reduce任务依次读取文件：
+	// mr-0-0，mr-1-0，mr-2-0，...，mr-len(MapIndex)-1-0 => reduce-tmp-mr-out-reduceIndex => reduce-tmp-mr-out-OriginIndex
+	// mr-0-1，mr-1-0，mr-2-0，...，mr-len(MapIndex)-1-0 => reduce-tmp-mr-out-reduceIndex => reduce-tmp-mr-out-OriginIndex
+	// ...
+	// mr-0-ReduceNum，mr-1-ReduceNum，mr-2-ReduceNum，...，mr-len(MapIndex)-1-ReduceNum => reduce-tmp-mr-out-reduceIndex => reduce-tmp-mr-out-OriginIndex
+	// MapIndex元素个数必然等于map文件的个数
 	for _, index := range task.MapIndex {
 		intermediateFileName := "mr" + "-" + strconv.FormatUint(index, 10) + "-" + strconv.Itoa(task.OriginIndex)
 		file, err := os.Open(intermediateFileName)
@@ -209,7 +220,7 @@ func todoReduceTask(task Task, reducef func(string, []string) string) (bool, err
 				break
 			}
 			intermediate = append(intermediate, kv)
-		}	
+		}
 	}
 	sort.Sort(ByKey(intermediate))
 	oname := "reduce-tmp-mr-out-" + strconv.FormatUint(task.Index, 10)

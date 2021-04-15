@@ -43,6 +43,7 @@ rm -f mr-out*
 
 echo '***' Starting wc test.
 
+# timeout命令运行180秒，如果命令没有结束，将在2秒后终止命令
 timeout -k 2s 180s ../mrmaster ../pg*txt &
 
 # give the master time to create the sockets.

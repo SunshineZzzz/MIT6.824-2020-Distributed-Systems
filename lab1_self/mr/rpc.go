@@ -46,9 +46,13 @@ type Task struct {
 	Phase TaskPhase
 	// 任务队列中的下标
 	Index uint64
-	// 最初的下标 0,1,2,...n
-	// master初始化时赋值，主要用于worker reduce阶段
-	// mr-mapIndex-OriginIndex
+	// reduce阶段初始化任务，设置为0, ..., ReduceNum
+	// 遍历MapIndex切片中所有完成map任务的下标
+	// reduce任务依次读取文件：
+	// mr-0-0，mr-1-0，mr-2-0，...，mr-len(MapIndex)-1-0 => reduce-tmp-mr-out-reduceIndex => mr-out-OriginIndex
+	// mr-0-1，mr-1-0，mr-2-0，...，mr-len(MapIndex)-1-0 => reduce-tmp-mr-out-reduceIndex => mr-out-OriginIndex
+	// ...
+	// mr-0-ReduceNum，mr-1-ReduceNum，mr-2-ReduceNum，...，mr-len(MapIndex)-1-ReduceNum => reduce-tmp-mr-out-reduceIndex => mr-out-OriginIndex
 	OriginIndex int
 	// 任务状态
 	Status TaskStatus
@@ -56,9 +60,17 @@ type Task struct {
 	StartRunTime time.Time
 	// 文件名
 	FileName string
-	// reduce个数
+	// 1.初始化reduce阶段任务数量
+	// 2.map阶段，ihash(Key) % ReduceNum = reduceIndex，放入map的中间文件
+	// mr-mapIndex-0, ..., ReduceNum
+	// 最终生成中间文件:
+	// mr-0-0，mr-0-1，mr-0-2，...，mr-0-ReduceNum
+	// mr-1-0，mr-0-1，mr-1-2，...，mr-1-ReduceNum
+	// ...
+	// mr-mapTaskNums-0，mr-mapTaskNums-1，mr-mapTaskNums-2，...，mr-mapTaskNums-ReduceNum
 	ReduceNum int
-	// map任务的下标
+	// map完成任务的下标
+	// MapIndex元素个数必然等于map文件的个数
 	MapIndex []uint64
 }
 

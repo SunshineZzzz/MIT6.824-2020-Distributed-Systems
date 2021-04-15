@@ -254,9 +254,9 @@ func MakeMaster(files []string, nReduce int) *Master {
 	defer m.mutex.Unlock()
 	// 你的代码
 	mapFileNum := len(files)
-	m.TaskPoolMap = make(map[uint64]Task, nReduce)
-	m.RunningPoolMap = make(map[uint64]Task, nReduce)
-	m.FinishPoolMap = make(map[uint64]Task, nReduce)
+	m.TaskPoolMap = make(map[uint64]Task, mapFileNum)
+	m.RunningPoolMap = make(map[uint64]Task, mapFileNum)
+	m.FinishPoolMap = make(map[uint64]Task, mapFileNum)
 	m.MapIndex = make([]uint64, 0, mapFileNum)
 	m.Files = files
 	m.Phase = TaskPhaseMap
