@@ -5,9 +5,25 @@
 #
 # purpose:
 # 1.正常测试wc.so配合mrsequential和mrmaster,mrworker结果是否一致，即单词出现个数统计
+# mr-x-x => {"Key":"state","Value":"1"}
+# mr-out-x => state 119
+# mr-wc-all => state 119
+#
 # 2.正常测试indexer.so配合mrsequential和mrmaster,mrworker结果是否一致，即单词所在文本统计
+# mr-x-x => {"Key":"ask","Value":"../pg-being_ernest.txt"}
+# mr-out-x => Constantinople 2 ../pg-frankenstein.txt,../pg-tom_sawyer.txt
+# mr-indexer-all => yonder 4 ../pg-grimm.txt,../pg-huckleberry_finn.txt,../pg-sherlock_holmes.txt,../pg-tom_sawyer.txt
+#
 # 3.检测map任务是否并行
+# mr-x-x => {"Key":"times-13529","Value":"1618476163.4"}
+# mr-x-x => {"Key":"parallel-13529","Value":"2"}
+# mr-out-x => times-13529 1618476161.4 1618476162.4 1618476163.4 1618476164.4
+# mr-out-x => parallel-13529 2 2 2 2
+#
 # 4.检测reduce任务是否并行
+# mr-x-x => {"Key":"c","Value":"1"}
+# mr-out-x => c 2
+#
 # 5.目的是检测MapReduce分布式系统的恢复能力
 
 RACE=
